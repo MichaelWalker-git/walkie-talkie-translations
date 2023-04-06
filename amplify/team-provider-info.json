@@ -1,0 +1,32 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-walkietalkie-dev-113258-authRole",
+      "UnauthRoleArn": "arn:aws:iam::098305555551:role/amplify-walkietalkie-dev-113258-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::098305555551:role/amplify-walkietalkie-dev-113258-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-walkietalkie-dev-113258-deployment",
+      "UnauthRoleName": "amplify-walkietalkie-dev-113258-unauthRole",
+      "StackName": "amplify-walkietalkie-dev-113258",
+      "StackId": "arn:aws:cloudformation:us-west-2:098305555551:stack/amplify-walkietalkie-dev-113258/79146b50-cff2-11ed-8e7d-02a25e06bffd",
+      "AmplifyAppId": "d1jsgt0bw8i7y6"
+    },
+    "categories": {
+      "auth": {
+        "walkietalkie2add3b30": {}
+      },
+      "storage": {
+        "walkietalkie6246507c": {
+          "bucketName": "translation-walkie-talki-voicetranslatorbucket49a-1d79pna6p5ltk",
+          "region": "us-east-1"
+        }
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d1jsgt0bw8i7y6",
+          "type": "manual"
+        }
+      }
+    }
+  }
+}
