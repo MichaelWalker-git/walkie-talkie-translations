@@ -57,8 +57,7 @@ const App = () => {
             setStep(4);
           }
           
-
-          if (pollyLocation) {
+          if (pollyLocation && !targetBlobUrl) {
             getPollyFile(pollyLocation);
             setStep(5);
             setVisualStep(5);
@@ -71,22 +70,33 @@ const App = () => {
    
   });
 
+  useEffect(() => {
+    if(targetBlobUrl){
+      console.log('Playing, targetBlobUrl set: '+ targetBlobUrl);
+      playback('target');
+    }else{
+      console.log('targetBlobUrl updated, and now empty.');
+    }
+  }, [targetBlobUrl]);
+
   async function getPollyFile(pollyLocation) {
     const file = await Storage.get(pollyLocation, { download: true });
     const blob = file.Body;
-    console.log('getting polly file '+pollyLocation);
-    setTargetBlobUrl(URL.createObjectURL(blob));
-    setTimeout(function () {
-      playback('target');
-    }, 1500)
+    if(!targetBlobUrl){
+      console.log('targetBlobUrl is blank. Getting file: '+pollyLocation);
+      setTargetBlobUrl(URL.createObjectURL(blob));
+    }
   }
 
   function playback(which) {
     let audio = document.getElementById('audio_' + which);
     setStep(5);
     setVisualStep(5);
-    audio.currentTime = 0;
-    audio.play();
+    console.log('PLAYBACK: '+targetBlobUrl);
+    if(targetBlobUrl){
+      audio.currentTime = 0;
+      audio.play();
+    }
   }
 
   function endPlayback() {
@@ -96,7 +106,7 @@ const App = () => {
 
   async function pushRecordingToCloud(fileBlob) {
     if (fileBlob) {
-      console.log('making blob');
+      console.log('Making blob');
       setSourceBlobUrl(URL.createObjectURL(fileBlob));
 
       const key = `${uuid()}.wav`;
@@ -213,7 +223,6 @@ const App = () => {
 
   return (
     <>
-    
     <div id="simulator">
       <Button variant="link" onClick={() => setVisualStep(0)}>0</Button>
       <Button variant="link" onClick={() => setVisualStep(1)}>1</Button>
@@ -305,7 +314,9 @@ const App = () => {
                         }
                         {(step >= 4) &&
                             <div>
-                              <Transcription text={translation} which="target" playback={() => playback('target')} />
+                              <Transcription text={transcription} which="source" />
+                              <hr/>
+                              <Transcription text={translation} which="target" />
                               <audio id="audio_target" src={targetBlobUrl} onEnded={() => endPlayback()} controls />
                             </div>
                           }

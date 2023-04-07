@@ -11,7 +11,6 @@ body {
   min-height: 100vh !important;
 }
 
-
 #root h1{
   font-size: var(--font-heading-l-size-otmxys, 24px);
   line-height: var(--font-heading-l-line-height-gev4n1, 30px);
@@ -19,6 +18,8 @@ body {
   font-weight: var(--font-heading-l-weight-xm7ks9, 800);
   text-align:center;
 }
+
+#root hr{max-width:780px; margin:1rem auto;}
 
 [data-amplify-authenticator] [data-amplify-router] {
   box-shadow: none !important;
@@ -135,9 +136,8 @@ button.playing:hover {
   transform: scale(1.03);
 }
 
-button.recording:active
-button.playing:active {
-  transform: scale(.98);
+button:hover:active {
+  filter:brightness(.9);
 }
 
 button strong {
@@ -317,11 +317,17 @@ audio {
   top: 2rem;
   right: 2rem;
 }
-
-.transcription, #steps{
-  height:140px;
+.transcription{
+  height:90px;
   max-height:140px;
-  margin:20px auto 0 auto;
+  margin: 0px auto;
+  width:100%;
+  max-width:700px;
+}
+#steps{
+  height:195px;
+  max-height:195px;
+  margin: 10px auto 10px auto;
   width:100%;
   max-width:700px;
 }
