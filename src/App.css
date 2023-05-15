@@ -7,8 +7,21 @@
   --gray: #d8d8d8;
 }
 
+html *{
+  font-size:1.3rem;
+  line-height:1.4rem;
+}
 body {
-  min-height: 100vh !important;
+  min-height: 100vh !important;  
+}
+
+#signOut{position:absolute !important;right:1rem;top:.3rem;}
+#intro *{line-height:140% !important;}
+#intro h1{ font-size:3rem !important; }
+#intro h2{ font-size:3rem !important; }
+#intro .awsui_content_vjswe_qgmad_97{line-height:330% !important;padding-right:20px;padding-left:20px}
+#intro .awsui_button_vjswe_qgmad_101.awsui_variant-primary_vjswe_qgmad_210:not(#\9){
+  border-radius:100px;
 }
 
 #root h1{
@@ -49,7 +62,7 @@ div.language {
   align-items: center;
   border: 2px solid var(--gray);
   border-radius: 60px;
-  padding: .3rem .5rem;
+  padding: 1rem .5rem;
   margin: .5rem auto;
   transition: all .3s;
 }

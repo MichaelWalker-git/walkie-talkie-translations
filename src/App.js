@@ -26,7 +26,7 @@ Amplify.configure(aws_exports);
 const bucket = aws_exports.aws_user_files_s3_bucket || 'amplify-audiotoawss3-dev-133151-deployment';
 
 
-const App = () => {
+const App = ({showIntro}) => {
   const [targetBlobUrl, setTargetBlobUrl] = useState('');
   const [sourceBlobUrl, setSourceBlobUrl] = useState('');
   const [sourceLanguage, setSourceLanguage] = useState();
@@ -234,7 +234,18 @@ const App = () => {
       </div>
 
       <div className="container-fluid">
-
+      
+        {(sourceLanguage && targetLanguage) && (
+            <Button variant="link" onClick={() => clearLanguages()}>
+            <Arrow90degLeft size={18}></Arrow90degLeft> Change Language</Button>
+          )
+        }
+        {(!sourceLanguage) && 
+          <Button variant="link" onClick={showIntro}><Arrow90degLeft size={18}></Arrow90degLeft> Back</Button>
+        }
+        {(sourceLanguage && !targetLanguage) && 
+          <Button variant="link" onClick={()=>setSourceLanguage()}><Arrow90degLeft size={18}></Arrow90degLeft> Back</Button>
+        }
         <AmplifyProvider>
           <Authenticator>
             {({ signOut, user }) => (
@@ -245,13 +256,9 @@ const App = () => {
                     <div className="container-fluid px-0">
                       <div className="d-flex justify-content-between pt-3">
                         <div>
-                          {(sourceLanguage && targetLanguage) &&
-                            <Button variant="link" onClick={() => clearLanguages()}>
-                              <Arrow90degLeft size={18}></Arrow90degLeft> Change Language</Button>
-                          }
                         </div>
                         <div>
-                          <Button variant="link" onClick={signOut}>Sign Out <BoxArrowRight size={18}></BoxArrowRight></Button>
+                          
                         </div>
                       </div>
                     </div>
@@ -259,12 +266,12 @@ const App = () => {
                 )}
 
                 
-                <h1>Voice Translator</h1>
+                
 
                 <div className="container px-4">
-                  {(!targetLanguage) &&
-                    <section className="language_selection mt-5 mb-5">
-                      <h2>Select the input language</h2>
+                  {(!targetLanguage && !sourceLanguage) &&
+                    <section className="language_selection">
+                      <h1 className="mb-5">Select the input language</h1>
                       <div className="row">
                         {languages.map((lang) => (
                           <div className="col-md-4" key={lang.code}>
@@ -280,7 +287,7 @@ const App = () => {
 
                   {(sourceLanguage && !targetLanguage) &&
                     <section className="language_selection">
-                      <h2>Select the translation language</h2>
+                      <h1 className="mb-5">Select the translation language</h1>
                       <div className="row">
                         {languages.map((lang) => (
                           <div className="col-md-4" key={lang.code}>
