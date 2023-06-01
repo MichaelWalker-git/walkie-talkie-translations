@@ -5,12 +5,12 @@ const LanguageChip = ({language, mode}) => {
     <>
     {(mode === "selection") ?         
         <label className="d-block d-flex align-items-center justify-content-between">
-            <CircleFlag countryCode={language.flag} height="40" />
+            <CircleFlag aria-hidden="true" countryCode={language.flag} height="40" />
             <strong className="flex-grow-1 text-center">{language.name}</strong>
         </label>
     : 
         <label>
-            <CircleFlag countryCode={language.flag} height="20"/>
+            <CircleFlag aria-hidden="true" countryCode={language.flag} height="20"/>
             <strong>{language.name}</strong> 
         </label>
     } 

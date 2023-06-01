@@ -14,7 +14,7 @@ import { createTranslationRecordings, startTranslationSfn } from "./graphql/muta
 import { onUpdateTranslationRecordings } from "./graphql/subscriptions";
 import "./App.css";
 import Button from "@cloudscape-design/components/button"
-import { Arrow90degLeft, BoxArrowRight } from 'react-bootstrap-icons';
+import { Arrow90degLeft } from 'react-bootstrap-icons';
 import RecordButton from './Components/RecordButton';
 import PlayButton from './Components/PlayButton';
 import LanguageChip from './Components/LanguageChip';
@@ -78,7 +78,20 @@ const App = ({showIntro}) => {
       console.log('targetBlobUrl updated, and now empty.');
     }
   }, [targetBlobUrl]);
+  
+  useEffect(() => {
+    if (sourceLanguage && targetLanguage){
+      document.querySelector('#header_step').focus(); 
+    }else{
+      if(sourceLanguage){
+        document.querySelector('#header_output').focus(); 
+      }else{
+        document.querySelector('#header_input').focus(); 
+      }
+    }
+  }, [sourceLanguage, targetLanguage]);
 
+  
   async function getPollyFile(pollyLocation) {
     const file = await Storage.get(pollyLocation, { download: true });
     const blob = file.Body;
@@ -171,7 +184,7 @@ const App = ({showIntro}) => {
     } else {      
       setTargetLanguage(language);
       setStep(0);
-      setVisualStep(0);
+      setVisualStep(0); 
     }
   }
 
@@ -251,33 +264,18 @@ const App = ({showIntro}) => {
             {({ signOut, user }) => (
               <>
 
-                {user && (
-                  <>
-                    <div className="container-fluid px-0">
-                      <div className="d-flex justify-content-between pt-3">
-                        <div>
-                        </div>
-                        <div>
-                          
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                )}
+                <div className="container-fluid">
+                <div className="row d-flex align-items-center" style={{'height':'90vh'}}>
 
-                
-                
-
-                <div className="container px-4">
                   {(!targetLanguage && !sourceLanguage) &&
                     <section className="language_selection">
-                      <h1 className="mb-5">Select the input language</h1>
+                      <h1 id="header_input" className="mb-5" tabIndex="-1">Select the input language</h1>
                       <div className="row">
                         {languages.map((lang) => (
                           <div className="col-md-4" key={lang.code}>
-                            <div className={"language mx-auto " + (sourceLanguage?.code === lang.code && "active")} onClick={() => handleLanguageClick('source',lang)} >
+                            <button type="submit" className={"language mx-auto " + (sourceLanguage?.code === lang.code && "active")} onClick={() => handleLanguageClick('source',lang)} >
                               <LanguageChip language={lang} mode="selection" />
-                            </div>
+                            </button>
                           </div>
                         ))}
                       </div>
@@ -287,13 +285,13 @@ const App = ({showIntro}) => {
 
                   {(sourceLanguage && !targetLanguage) &&
                     <section className="language_selection">
-                      <h1 className="mb-5">Select the translation language</h1>
+                      <h1 id="header_output" className="mb-5" tabIndex="-1">Select the translation language</h1>
                       <div className="row">
                         {languages.map((lang) => (
                           <div className="col-md-4" key={lang.code}>
-                            <div className={"language mx-auto " + (sourceLanguage?.code === lang.code && "disabled")} onClick={() => handleLanguageClick('target',lang)}>
+                            <button type="submit" className={"language mx-auto " + (sourceLanguage?.code === lang.code && "disabled")} onClick={() => handleLanguageClick('target',lang)} disabled={sourceLanguage?.code === lang.code}>
                               <LanguageChip language={lang} mode="selection" />
-                            </div>
+                            </button>
                           </div>
                         ))}
                       </div>
@@ -303,8 +301,17 @@ const App = ({showIntro}) => {
 
                   {(sourceLanguage && targetLanguage) &&
                     <section className="translation">
+                      
                       <div className="row flex-row">
-                        <div className="col-mdx mb-4">
+
+                        
+                        <div className="col-6 align-items-center d-flex px-5 order-2">
+                          
+                        <StatusBoard step={visualStep}></StatusBoard>
+                        </div>
+
+
+                        <div className="col-3 order-1">
                           <div className="translator mx-auto text-center">
                             <LanguageChip language={sourceLanguage} mode="recording" />
                             <RecordButton step={step} stop={() => clickStop()} start={() => { clickStart(targetLanguage) }} />
@@ -315,29 +322,32 @@ const App = ({showIntro}) => {
                               <audio id="audio_source" src={sourceBlobUrl} controls />
                             </div>
                           }
-                        </div>
-                        {(step <= 3) &&
-                        <StatusBoard step={visualStep}></StatusBoard>
-                        }
-                        {(step >= 4) &&
-                            <div>
-                              <Transcription text={transcription} which="source" />
-                              <hr/>
-                              <Transcription text={translation} which="target" />
-                              <audio id="audio_target" src={targetBlobUrl} onEnded={() => endPlayback()} controls />
-                            </div>
+                          
+                          {(step >= 4) &&
+                          <Transcription text={transcription} which="source" />
                           }
 
-                        <div className="col-mdx">
+                        </div>
+                        
+                        
+                        <div className="col-3 order-3">
                           <div className="translator recorder mx-auto text-center">
                             <LanguageChip language={targetLanguage} mode="recording" />
                             <PlayButton step={step} playback={() => playback('target')} />
                           </div>
 
+                          {(step >= 4) &&
+                          <>
+                            <Transcription text={translation} which="target" />
+                            <audio id="audio_target" src={targetBlobUrl} onEnded={() => endPlayback()} controls />
+                          </>
+                          }
+
                         </div>
                       </div>
                     </section>
                   }
+                </div>
                 </div>
 
               </>
