@@ -13,8 +13,8 @@ html *{
 }
 body {
   min-height: 100vh !important;  
-  padding-left:80px;
-  padding-right:80px;
+  padding-left:40px;
+  padding-right:40px;
   padding-top:20px;
 }
 h1:focus, h2:focus, h3:focus{outline: none;}
@@ -362,5 +362,5 @@ audio {
   left: calc(50% - 300px);
   top:0px;
   text-align: center;
-  display:none;
-}
+  display: none;
+  }

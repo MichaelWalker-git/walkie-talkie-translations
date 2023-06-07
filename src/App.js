@@ -141,7 +141,7 @@ const App = ({showIntro}) => {
             }
           })        
 
-        const graphqlCall = await API.graphql(
+        await API.graphql(
           graphqlOperation(
             createTranslationRecordings,
             { input: recordingInput },
@@ -150,13 +150,13 @@ const App = ({showIntro}) => {
         )
         console.log('Uploading...');
 
-        const startStepFunction = await API.graphql(
+        await API.graphql(
           graphqlOperation(
             startTranslationSfn,
             { input: recordingInput },
             aws_exports.aws_appsync_apiKey
-          )
-        );        
+          )          
+        );
         console.log('Requesting translation...');
       } catch (err) {
         console.log('error: ', err)
@@ -221,14 +221,24 @@ const App = ({showIntro}) => {
   }
 
 
-  const languages = [    
-        { flag: "ae", code : "ar", name : "Arabic, Modern Standard"},
+  const inputLanguages = [    
+        { flag: "ae", code : "ar", name : "Arabic (MSA)"},
         { flag: "za", code : "af", name : "Afrikaans"},
-        { flag: "cn", code : "zh", name : "Chinese (Mandarin)"},
+        { flag: "cn", code : "zh", name : "Mandarin"},
         { flag: "us", code : "en", name : "English, US"},
         { flag: "jp", code : "ja", name : "Japanese"},
         { flag: "fr", code : "fr", name : "French"},
         { flag: "il", code : "he", name : "Hebrew"},
+        { flag: "ru", code : "ru", name : "Russian"},
+        { flag: "es", code : "es", name : "Spanish"},
+        { flag: "tr", code : "tr", name : "Turkish"}
+  ];
+  const outputLanguages = [    
+        { flag: "ae", code : "ar", name : "Arabic (MSA)"},
+        { flag: "cn", code : "zh", name : "Mandarin"},
+        { flag: "us", code : "en", name : "English, US"},
+        { flag: "jp", code : "ja", name : "Japanese"},
+        { flag: "fr", code : "fr", name : "French"},
         { flag: "ru", code : "ru", name : "Russian"},
         { flag: "es", code : "es", name : "Spanish"},
         { flag: "tr", code : "tr", name : "Turkish"}
@@ -271,7 +281,7 @@ const App = ({showIntro}) => {
                     <section className="language_selection">
                       <h1 id="header_input" className="mb-5" tabIndex="-1">Select the input language</h1>
                       <div className="row">
-                        {languages.map((lang) => (
+                        {inputLanguages.map((lang) => (
                           <div className="col-md-4" key={lang.code}>
                             <button type="submit" className={"language mx-auto " + (sourceLanguage?.code === lang.code && "active")} onClick={() => handleLanguageClick('source',lang)} >
                               <LanguageChip language={lang} mode="selection" />
@@ -287,12 +297,13 @@ const App = ({showIntro}) => {
                     <section className="language_selection">
                       <h1 id="header_output" className="mb-5" tabIndex="-1">Select the translation language</h1>
                       <div className="row">
-                        {languages.map((lang) => (
-                          <div className="col-md-4" key={lang.code}>
-                            <button type="submit" className={"language mx-auto " + (sourceLanguage?.code === lang.code && "disabled")} onClick={() => handleLanguageClick('target',lang)} disabled={sourceLanguage?.code === lang.code}>
-                              <LanguageChip language={lang} mode="selection" />
-                            </button>
-                          </div>
+                        {outputLanguages.map((lang) => (
+                          (sourceLanguage?.code !== lang.code) &&                             
+                            <div className="col-md-4" key={lang.code}>
+                              <button type="submit" className="language mx-auto" onClick={() => handleLanguageClick('target',lang)}>
+                                <LanguageChip language={lang} mode="selection" />
+                              </button>
+                            </div>                          
                         ))}
                       </div>
                     </section>
@@ -305,13 +316,13 @@ const App = ({showIntro}) => {
                       <div className="row flex-row">
 
                         
-                        <div className="col-6 align-items-center d-flex px-5 order-2">
+                        <div className="col-md-4 col-lg-6 align-items-center d-flex px-2 order-2">
                           
                         <StatusBoard step={visualStep}></StatusBoard>
                         </div>
 
 
-                        <div className="col-3 order-1">
+                        <div className="col-md-4 col-lg-3 order-1">
                           <div className="translator mx-auto text-center">
                             <LanguageChip language={sourceLanguage} mode="recording" />
                             <RecordButton step={step} stop={() => clickStop()} start={() => { clickStart(targetLanguage) }} />
@@ -330,7 +341,7 @@ const App = ({showIntro}) => {
                         </div>
                         
                         
-                        <div className="col-3 order-3">
+                        <div className="col-md-4 col-lg-3 order-3">
                           <div className="translator recorder mx-auto text-center">
                             <LanguageChip language={targetLanguage} mode="recording" />
                             <PlayButton step={step} playback={() => playback('target')} />
