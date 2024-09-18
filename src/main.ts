@@ -2,8 +2,7 @@ import path from 'path';
 import {
   GraphqlApi,
   MappingTemplate,
-  FieldLogLevel,
-  Schema,
+  FieldLogLevel, SchemaFile,
 } from '@aws-cdk/aws-appsync-alpha';
 import { AuthorizationType } from '@aws-cdk/aws-appsync-alpha/lib/graphqlapi';
 import { App, CfnOutput, Duration, Expiration, Stack, StackProps } from 'aws-cdk-lib';
@@ -19,7 +18,9 @@ import { Choice, Condition, Fail, StateMachine } from 'aws-cdk-lib/aws-stepfunct
 import { LambdaInvoke } from 'aws-cdk-lib/aws-stepfunctions-tasks';
 import { Construct } from 'constructs';
 import * as dotenv from 'dotenv';
+
 dotenv.config();
+
 export class MyStack extends Stack {
   constructor(scope: Construct, id: string, props: StackProps = {}) {
     super(scope, id, props);
@@ -288,7 +289,7 @@ export class MyStack extends Stack {
       this,
       'AppSyncLiveTranslationApi',
       {
-        schema: Schema.fromAsset(path.join(__dirname, 'graphql/schema.graphql')),
+        schema: SchemaFile.fromAsset(path.join(__dirname, 'graphql/schema.graphql')),
         name: 'AppSync2StepFunction-API',
         authorizationConfig: {
           defaultAuthorization: {
@@ -321,7 +322,7 @@ export class MyStack extends Stack {
       },
     );
 
-    translationRecordingDataSource.createResolver({
+    translationRecordingDataSource.createResolver('GetTranslationRecordingsResolver', {
       typeName: 'Query',
       fieldName: 'getTranslationRecordings',
       requestMappingTemplate: MappingTemplate.fromFile(
@@ -332,7 +333,8 @@ export class MyStack extends Stack {
       ),
     });
 
-    translationRecordingDataSource.createResolver({
+
+    translationRecordingDataSource.createResolver('ListTranslationRecordingsResolver', {
       typeName: 'Query',
       fieldName: 'listTranslationRecordings',
       requestMappingTemplate: MappingTemplate.fromFile(
@@ -343,7 +345,7 @@ export class MyStack extends Stack {
       ),
     });
 
-    translationRecordingDataSource.createResolver({
+    translationRecordingDataSource.createResolver('CreateTranslationRecordingsResolver', {
       typeName: 'Mutation',
       fieldName: 'createTranslationRecordings',
       requestMappingTemplate: MappingTemplate.fromFile(
@@ -354,7 +356,7 @@ export class MyStack extends Stack {
       ),
     });
 
-    translationRecordingDataSource.createResolver({
+    translationRecordingDataSource.createResolver('UpdateTranslationRecordingsResolver', {
       typeName: 'Mutation',
       fieldName: 'updateTranslationRecordings',
       requestMappingTemplate: MappingTemplate.fromFile(
@@ -365,12 +367,10 @@ export class MyStack extends Stack {
       ),
     });
 
-    startTranslationSfnDataSource.createResolver(
-      {
-        typeName: 'Mutation',
-        fieldName: 'startTranslationSfn',
-      },
-    );
+    startTranslationSfnDataSource.createResolver('StartTranslationSfnResolver', {
+      typeName: 'Mutation',
+      fieldName: 'startTranslationSfn',
+    });
 
     // Cognito Identity Pool
     const identityPool = new CfnIdentityPool(this, 'CognitoIdentityPool', {
